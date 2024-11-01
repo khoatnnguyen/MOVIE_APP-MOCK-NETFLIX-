@@ -1,5 +1,5 @@
 // src/pages/MovieDetailPage.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Grid2,
@@ -27,17 +27,13 @@ const MovieDetailPage = () => {
   const [recommendations, setRecommendations] = useState([]); // Add recommendations state
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadMovieData();
-  }, [id]);
-
-  const loadMovieData = async () => {
+  const loadMovieData = useCallback(async () => {
     try {
       setLoading(true);
       const [movieData, reviewsData, recommendationsData] = await Promise.all([
         tmdbApi.getMovieDetails(id),
         tmdbApi.getMovieReviews(id),
-        tmdbApi.getRecommendations(id), // Add recommendations API call
+        tmdbApi.getRecommendations(id),
       ]);
 
       setMovie(movieData.data);
@@ -48,7 +44,11 @@ const MovieDetailPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadMovieData();
+  }, [id, loadMovieData]);
 
   if (loading) return <Loading />;
   if (!movie) return null;

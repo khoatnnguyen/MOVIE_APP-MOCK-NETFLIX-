@@ -113,6 +113,14 @@ const tmdbApi = {
   },
 
   // Get movie lists
+  getTopRated: (page = 1) => {
+    return tmdbAxios.get("/movie/top_rated", {
+      params: {
+        page,
+      },
+    });
+  },
+
   getNowPlaying: (page = 1) => {
     return tmdbAxios.get("/movie/now_playing", { params: { page } });
   },

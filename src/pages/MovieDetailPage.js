@@ -21,7 +21,6 @@ import MovieCarousel from "../components/movies/MovieCarousel"; // Import MovieC
 const MovieDetailPage = () => {
   const { id } = useParams();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [movie, setMovie] = useState(null);
   const [reviews, setReviews] = useState([]);

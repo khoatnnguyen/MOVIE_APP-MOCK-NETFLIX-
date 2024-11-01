@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+} from "react";
 import tmdbApi from "../api/tmdbApi";
 import { useAuth } from "./AuthContext";
 
@@ -9,15 +15,7 @@ export const MovieProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (auth?.sessionId && auth?.accountId) {
-      loadFavorites();
-    } else {
-      setFavorites([]);
-    }
-  }, [auth?.sessionId, auth?.accountId]);
-
-  const loadFavorites = async () => {
+  const loadFavorites = useCallback(async () => {
     try {
       setLoading(true);
       const { data } = await tmdbApi.getFavoriteMovies(
@@ -30,7 +28,15 @@ export const MovieProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [auth?.accountId, auth?.sessionId]);
+
+  useEffect(() => {
+    if (auth?.sessionId && auth?.accountId) {
+      loadFavorites();
+    } else {
+      setFavorites([]);
+    }
+  }, [auth?.sessionId, auth?.accountId, loadFavorites]);
 
   const toggleFavorite = async (movie) => {
     if (!auth?.sessionId || !auth?.accountId) {

@@ -14,7 +14,7 @@ import {
   Container,
 } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { Search, Heart, LogOut } from "lucide-react";
+import { Heart, LogOut } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
 const Navigation = () => {
@@ -54,10 +54,10 @@ const Navigation = () => {
               flexGrow: 1,
             }}
           >
-            MOVIEAPP
+            Movie
           </Typography>
 
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
             <Button
               component={RouterLink}
               to="/"

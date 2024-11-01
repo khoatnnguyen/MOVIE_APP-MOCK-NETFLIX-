@@ -1,5 +1,5 @@
 // src/pages/HomePage.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Typography,
@@ -32,34 +32,7 @@ const HomePage = () => {
 
   const debouncedSearch = useDebounce(query, 500);
 
-  useEffect(() => {
-    loadGenres();
-    loadTopRated();
-  }, []);
-
-  useEffect(() => {
-    loadMovies();
-  }, [page, debouncedSearch, genreId]);
-
-  const loadGenres = async () => {
-    try {
-      const { data } = await tmdbApi.getGenres();
-      setGenres(data.genres);
-    } catch (error) {
-      console.error("Failed to load genres:", error);
-    }
-  };
-
-  const loadTopRated = async () => {
-    try {
-      const { data } = await tmdbApi.getTopRated();
-      setTopRated(data.results);
-    } catch (error) {
-      console.error("Failed to load top rated movies:", error);
-    }
-  };
-
-  const loadMovies = async () => {
+  const loadMovies = useCallback(async () => {
     try {
       setLoading(true);
       let response;
@@ -79,7 +52,56 @@ const HomePage = () => {
     } finally {
       setLoading(false);
     }
+  }, [debouncedSearch, genreId, page]);
+
+  useEffect(() => {
+    loadGenres();
+    loadTopRated();
+  }, []);
+
+  useEffect(() => {
+    loadMovies();
+  }, [page, debouncedSearch, genreId, loadMovies]);
+
+  const loadGenres = async () => {
+    try {
+      const { data } = await tmdbApi.getGenres();
+      setGenres(data.genres);
+    } catch (error) {
+      console.error("Failed to load genres:", error);
+    }
   };
+
+  const loadTopRated = async () => {
+    try {
+      const { data } = await tmdbApi.getTopRated();
+      setTopRated(data.results);
+    } catch (error) {
+      console.error("Failed to load top rated movies:", error);
+    }
+  };
+
+  // const loadMovies = async () => {
+  //   try {
+  //     setLoading(true);
+  //     let response;
+
+  //     if (debouncedSearch) {
+  //       response = await tmdbApi.searchMovies(debouncedSearch, page);
+  //     } else if (genreId) {
+  //       response = await tmdbApi.getMoviesByGenre(genreId, page);
+  //     } else {
+  //       response = await tmdbApi.getPopularMovies(page);
+  //     }
+
+  //     setMovies(response.data.results);
+  //     setTotalPages(Math.min(response.data.total_pages, 500));
+  //   } catch (error) {
+  //     console.error("Failed to load movies:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleSearch = (event) => {
     const newQuery = event.target.value;
